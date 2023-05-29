@@ -109,8 +109,6 @@ function createWindow() {
 	];
 	let menu = Menu.buildFromTemplate(menuTemplate);
 	Menu.setApplicationMenu(menu);
-
-	mainWindow.webContents.openDevTools();
 }
 
 // This method will be called when Electron has finished
