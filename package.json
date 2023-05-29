@@ -6,7 +6,8 @@
   "author": "Thicco Catto",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^24.3.1"
+    "electron": "^24.3.1",
+    "electron-packager": "^17.1.1"
   },
   "scripts": {
     "start": "electron ./src/main.js"

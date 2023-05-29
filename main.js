@@ -1,7 +1,7 @@
 const { app, BrowserWindow, ipcMain, Menu, dialog } = require("electron");
 const { join } = require("path");
-const { LoadModStates, SaveModStates } = require("./modManager");
-const { WriteModCollectionFile, SetActiveModsFromCollectionFile } = require("./modCollection");
+const { LoadModStates, SaveModStates } = require("./src/modManager");
+const { WriteModCollectionFile, SetActiveModsFromCollectionFile } = require("./src/modCollection");
 
 const DEFAULT_MODS_PATH = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\The Binding of Isaac Rebirth\\mods";
 let modsPath = "";
@@ -92,7 +92,7 @@ function createWindow() {
 	});
 
 	// and load the index.html of the app.
-	mainWindow.loadFile(join(__dirname, "../index.html"));
+	mainWindow.loadFile(join(__dirname, "index.html"));
 
 	const menuTemplate = [
 		{
