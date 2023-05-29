@@ -10,7 +10,7 @@
     "electron-packager": "^17.1.1"
   },
   "scripts": {
-    "start": "electron ./src/main.js"
+    "start": "electron ."
   },
   "dependencies": {
     "fast-xml-parser": "^4.2.2"
