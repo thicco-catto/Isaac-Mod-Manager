@@ -22,3 +22,4 @@ If you plan on switching mods frequently, you can easily export your current mod
     * Actually saving settings
     * Showing missing mods from collection when loading
     * Showing steam links for steam mods
+    * Add more platform support
