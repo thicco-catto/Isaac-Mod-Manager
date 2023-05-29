@@ -1,0 +1,17 @@
+{
+  "name": "isaac-mod-manager",
+  "version": "1.0.0",
+  "description": "Tool that allows for easy managing of Isaac mods.",
+  "main": "main.js",
+  "author": "Thicco Catto",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^24.3.1"
+  },
+  "scripts": {
+    "start": "electron ./src/main.js"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^4.2.2"
+  }
+}

@@ -1,0 +1,106 @@
+body#background {
+    background-color : #14192c;
+}
+
+button#apply {
+    border: 0;
+    border-radius: 4%;
+    background-color: #006f04;
+    padding: 10px;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: x-large;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+button#apply {
+    border: 0;
+    border-radius: 4%;
+    background-color: #006f04;
+    padding: 10px;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: x-large;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+button#apply:hover {
+    background-color: #00a205;
+}
+
+h1#mod-name {
+    margin-top: 5%;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    color: #ffffff;
+    font-size: xx-large;
+}
+
+div#mod-description {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    color: #fff;
+    font-size: medium;
+}
+
+/* strong.mod-description {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+} */
+
+h1.mod-description, h2.mod-description, h3.mod-description {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    margin: 0;
+    color: #63bbff;
+}
+
+h1.mod-description {
+    font-size: x-large;
+}
+
+h2.mod-description {
+    font-size: larger;
+}
+
+h3.mod-description {
+    font-size: large;
+}
+
+table.mod-description, tr.mod-description, td.mod-description, th.mod-description {
+    border: solid 1px rgb(209, 209, 209);
+    border-collapse: collapse;
+}
+
+div.mod-description-code-box {
+    border: solid 1px rgba(130, 130, 130, 0.556);
+    border-radius: 2%;
+    padding: 2%;
+    margin-top: 5%;
+    margin-bottom: 2%;
+}
+
+img.mod-description {
+    max-width: 100%;
+    height: auto;
+}
+
+.spoiler {
+    background-color: #000;
+    color: #000;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.spoiler:hover {
+    color: #fff;
+}
+
+.spoiler.collapsed {
+    color: #fff;
+}
+
+.spoiler.collapsed::after {
+    content: 'Spoiler';
+}
+
+.spoiler.collapsed:hover::after {
+    content: '';
+}
+
