@@ -106,13 +106,15 @@ applyButton.addEventListener("click", () => {
 });
 
 
-window.electronAPI.onRequestPageModList((_, purpose) => {
+window.electronAPI.onRequestPageModList((_, purpose, path) => {
     if(purpose === "apply") {
         window.electronAPI.saveModList(modList);
     }else if(purpose === "export") {
         window.electronAPI.exportModList(modList);
     }else if(purpose === "load") {
         window.electronAPI.loadModList(modList);
+    }else if(purpose === "load-recent") {
+        window.electronAPI.loadModListFromPath(modList, path);
     }
 });
 

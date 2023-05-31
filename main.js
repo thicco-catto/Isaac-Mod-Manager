@@ -1,11 +1,15 @@
-const { app, BrowserWindow, ipcMain, Menu, dialog } = require("electron");
-const { join } = require("path");
+const { app, BrowserWindow, ipcMain, Menu, dialog, MenuItem } = require("electron");
+const { join, dirname } = require("path");
 const { LoadModStates, SaveModStates } = require("./src/modManager");
 const { WriteModCollectionFile, SetActiveModsFromCollectionFile } = require("./src/modCollection");
+const { LoadConfig, SaveConfig } = require("./src/config");
 
-const DEFAULT_MODS_PATH = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\The Binding of Isaac Rebirth\\mods";
 let modsPath = "";
+let lastModCollectionFolder = "";
+let recentLoadedModCollections = [];
+
 let mainWindow
+let recentPathsSubmenu
 
 function handleGettingModList() {
 	return LoadModStates(modsPath);
@@ -18,7 +22,7 @@ function onSaveModList(_, modList) {
 
 async function onExportModList(_, modList) {
 	const path = await dialog.showSaveDialog(null, {
-		defaultPath: __dirname,
+		defaultPath: lastModCollectionFolder,
 		filters: [
 			{
 				name: "Isaac Mod Collection",
@@ -32,13 +36,41 @@ async function onExportModList(_, modList) {
 	});
 	if(path.canceled){ return; }
 
+	lastModCollectionFolder = dirname(path.filePath);
 	WriteModCollectionFile(modList, path.filePath);
+}
+
+
+function UpdateRecentPaths(path) {
+	if(recentLoadedModCollections.includes(path)){
+		const index = recentLoadedModCollections.indexOf(path);
+		recentLoadedModCollections.splice(index, 1);
+	}
+
+	recentLoadedModCollections.unshift(path);
+
+	recentLoadedModCollections.slice(0, 10);
+
+	recentPathsSubmenu.clear();
+	const newSubmenu = GetRecentPathsSubmenu();
+	newSubmenu.forEach(x => {
+		recentPathsSubmenu.append(new MenuItem(x))
+	});
+}
+
+
+function LoadModList(modList, path) {
+	UpdateRecentPaths(path);
+
+	SetActiveModsFromCollectionFile(modList, path);
+	SaveModStates(modList);
+	mainWindow.webContents.send('update-mod-list', modList);
 }
 
 
 async function onLoadModList(_, modList) {
 	const path = await dialog.showOpenDialog(null, {
-		defaultPath: __dirname,
+		defaultPath: lastModCollectionFolder,
 		filters: [
 			{
 				name: "Isaac Mod Collection",
@@ -52,9 +84,13 @@ async function onLoadModList(_, modList) {
 	});
 	if(path.canceled) { return; }
 
-	SetActiveModsFromCollectionFile(modList, path.filePaths[0]);
-	SaveModStates(modList);
-	mainWindow.webContents.send('update-mod-list', modList);
+	lastModCollectionFolder = dirname(path.filePaths[0]);
+	LoadModList(modList, path.filePaths[0]);
+}
+
+
+function onLoadMosListFromPath(_, modList, path) {
+	LoadModList(modList, path)
 }
 
 
@@ -66,7 +102,7 @@ function reloadModsFromFolder() {
 
 async function changeModsPath() {
 	const path = await dialog.showOpenDialog(null, {
-		defaultPath: __dirname,
+		defaultPath: modsPath,
 		properties: [
 			"openDirectory",
 			"dontAddToRecent"
@@ -78,6 +114,14 @@ async function changeModsPath() {
 	modsPath = path.filePaths[0];
 	const modStates = LoadModStates(modsPath);
 	mainWindow.webContents.send('update-mod-list', modStates);
+}
+
+
+function GetRecentPathsSubmenu() {
+	return recentLoadedModCollections.map(path => ({
+		label: path,
+		click: () => mainWindow.webContents.send('request-page-mod-list', "load-recent", path)
+	}))
 }
 
 
@@ -101,13 +145,15 @@ function createWindow() {
 				{ label: "Apply", click: () => mainWindow.webContents.send('request-page-mod-list', "apply") },
 				{ label: "Export", click: () => mainWindow.webContents.send('request-page-mod-list', "export") },
 				{ label: "Load", click: () => mainWindow.webContents.send('request-page-mod-list', "load") },
+				{ label: "Load Recent", submenu: GetRecentPathsSubmenu()},
 				{ type: 'separator' },
 				{ label: "Reload Mods", click: () => reloadModsFromFolder()},
 				{ label: "Change Mods Path", click: async () => await changeModsPath()}
 			]
 		},
 	];
-	let menu = Menu.buildFromTemplate(menuTemplate);
+	const menu = Menu.buildFromTemplate(menuTemplate);
+	recentPathsSubmenu = menu.items[0].submenu.items[3].submenu
 	Menu.setApplicationMenu(menu);
 }
 
@@ -115,13 +161,17 @@ function createWindow() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-	modsPath = DEFAULT_MODS_PATH;
+	const config = LoadConfig();
+	modsPath = config.modsPath;
+	lastModCollectionFolder = config.lastModCollectionFolder;
+	recentLoadedModCollections = config.recentLoadedModCollections;
 
 	ipcMain.handle("request-mod-list", handleGettingModList);
 
 	ipcMain.on('save-mod-list', onSaveModList);
 	ipcMain.on('export-mod-list', onExportModList);
 	ipcMain.on('load-mod-list', onLoadModList);
+	ipcMain.on('load-mod-list-from-path', onLoadMosListFromPath)
 
 	createWindow();
 
@@ -136,6 +186,12 @@ app.whenReady().then(() => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on("window-all-closed", () => {
+	SaveConfig(
+		modsPath,
+		lastModCollectionFolder,
+		recentLoadedModCollections
+	);
+
 	if (process.platform !== "darwin") {
 		app.quit();
 	}

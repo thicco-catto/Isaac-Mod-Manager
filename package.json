@@ -1,6 +1,6 @@
 {
   "name": "isaac-mod-manager",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Tool that allows for easy managing of Isaac mods.",
   "main": "main.js",
   "author": "Thicco Catto",
