@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Menu, dialog, MenuItem } = require("electron");
+const { app, BrowserWindow, ipcMain, Menu, dialog, MenuItem, shell } = require("electron");
 const { join, dirname } = require("path");
 const { LoadModStates, SaveModStates } = require("./src/modManager");
 const { WriteModCollectionFile, SetActiveModsFromCollectionFile } = require("./src/modCollection");
@@ -155,6 +155,11 @@ function createWindow() {
 	const menu = Menu.buildFromTemplate(menuTemplate);
 	recentPathsSubmenu = menu.items[0].submenu.items[3].submenu
 	Menu.setApplicationMenu(menu);
+
+	mainWindow.webContents.on('will-navigate', (event, url) => {
+		event.preventDefault();
+		shell.openExternal(url);
+	});
 }
 
 // This method will be called when Electron has finished
